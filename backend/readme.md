@@ -6,7 +6,7 @@ This is the backend component for the challenge. This API contains a single endp
 
 TODO: rate limiting + api key documentation
 
-It forwards the request onto the OpenWeatherApi service, and if successful returns the description for the weather in the requested city.
+It forwards the request on to the OpenWeatherApi service, and if successful returns the description for the weather in the requested city.
 
 ## Dependencies
 
@@ -42,6 +42,50 @@ This is best achieved with a `local.settings.json` file stored in the [Weather S
 }
 ```
 
+## Build
+
+To build the project, run the following command from the root directory:
+
+```sh
+dotnet build
+```
+
+## Run
+
+To run the Azure Functions project locally:
+
+1. Ensure you have set up your `local.settings.json` as described above.
+2. Start the function app:
+
+```sh
+cd WeatherService
+func start
+```
+
+Or, using the .NET CLI:
+
+```sh
+dotnet run --project WeatherService
+```
+
+## Test
+
+To run the unit tests:
+
+```sh
+dotnet test
+```
+
+Or, to run tests for the specific test project:
+
+```sh
+dotnet test WeatherService.Tests
+```
+
+---
+
+Make sure you have all dependencies installed (see [Dependencies](#dependencies) above) before running or testing the project.
+
 ## Considerations
 
 1. Sliding expiration for rate limiting
@@ -67,4 +111,12 @@ I could talk hours about time, and how it's all made up (when is an hour not an 
 In the current implmentation, we decrease the remainng retries for the rate limit before we even know if the request is successful or not. This means that if we have an error on our end, the user is still "charged" for the attempt.
 
 Ideally we wouldn't decrease th4e count until we know it's successful, however that opens up the concurrency edge case (same user making multiple requests in parallel), so I opted for optimistic rate limiting.
+
+3. API Key validation
+
+API Key validation (and in general the whole authorisation + authentication flow) is best handled in front of microservices. The code should focus on the business needs, while allowing other services like APIM to handle the intracies required.
+
+In general, it should be impossible for a user to invocate a call through to our functions if they aren't authenticated, saving expensive compute time.
+
+I'd also never store secrets in plain text in a repo either.
 

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using WeatherService.Services.ApiKeyValidation;
 using WeatherService.Services.OpenWeatherMap;
 using WeatherService.Services.RateLimiting;
 
@@ -16,7 +17,8 @@ namespace WeatherService;
 public class FetchWeather(
     ILogger<FetchWeather> logger,
     IWeatherApiService weatherApiService,
-    IRateLimitingService rateLimitingService)
+    IRateLimitingService rateLimitingService,
+    ApiKeyValidationService apiKeyValidationService)
 {
     /// <summary>
     /// Fetch weather function
@@ -26,10 +28,19 @@ public class FetchWeather(
     [Function("FetchWeather")]
     public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)
     {
-        // TODO: api key validation
-        string userKey = "abc123";
-
         // A consideration for an orchestrator pattern could be made here, but we don't want to over-engineer
+        string userKey;
+        try
+        {
+            // Validate the API key from headers or query parameters
+            userKey = apiKeyValidationService.ValidateApiKey(req);
+        }
+        catch (ApiKeyValidationException)
+        {
+            // If the API key is invalid, return a 401 Unauthorized response
+            return new UnauthorizedResult();
+        }
+
         try
         {
             // If needed, it would be simple to add a return value here to let the client know how many requests they have left
@@ -40,13 +51,13 @@ public class FetchWeather(
             return new StatusCodeResult(StatusCodes.Status429TooManyRequests);
         }
 
-        string? country = req.Query["country"];
+        string? country = req.Query["country"].FirstOrDefault();
         if (string.IsNullOrWhiteSpace(country))
         {
             return new BadRequestObjectResult("Please enter country query parameter");
         }
 
-        string? city = req.Query["city"];
+        string? city = req.Query["city"].FirstOrDefault();
         if (string.IsNullOrWhiteSpace(city))
         {
             return new BadRequestObjectResult("Please enter city query parameter");
