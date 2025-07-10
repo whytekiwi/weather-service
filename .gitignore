@@ -1,2 +1,3 @@
 # Ignore files added by VSCode, as it's currently bugging on my computer
 .vscode
+.idea
