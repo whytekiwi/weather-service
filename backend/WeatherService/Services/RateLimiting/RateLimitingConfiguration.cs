@@ -1,7 +1,7 @@
 ﻿namespace WeatherService.Services.RateLimiting;
 
 /// <summary>
-/// Allows for configurating the rate limiting service without changing application code.
+/// Allows for configuration the rate limiting service without changing application code.
 /// </summary>
 public class RateLimitingConfiguration
 {

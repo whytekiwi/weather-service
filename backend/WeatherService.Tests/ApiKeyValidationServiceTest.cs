@@ -69,7 +69,7 @@ public class ApiKeyValidationServiceTest
         httpReq.Setup(req => req.Query).Returns(new QueryCollection());
         var service = new ApiKeyValidationService(validApiKeys);
 
-        // Act & Assert
+        // Act + Assert
         Assert.Throws<ApiKeyValidationException>(() =>
         {
             string userId = service.ValidateApiKey(httpReq.Object);

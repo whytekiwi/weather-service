@@ -16,8 +16,8 @@ public class WeatherApiService : IWeatherApiService
     public WeatherApiService(IOptions<OpenWeatherMapConfiguration> configuration, IHttpClientFactory httpClientFactory)
     {
         // Create readable exceptions if expected values are null
-        ArgumentException.ThrowIfNullOrWhiteSpace(configuration?.Value?.ApiKey, "OpenWeatherMapConfiguration:ApiKey");
-        ArgumentException.ThrowIfNullOrWhiteSpace(configuration?.Value?.Url, "OpenWeatherMapConfiguration:Url");
+        ArgumentException.ThrowIfNullOrWhiteSpace(configuration.Value.ApiKey, "OpenWeatherMapConfiguration:ApiKey");
+        ArgumentException.ThrowIfNullOrWhiteSpace(configuration.Value.Url, "OpenWeatherMapConfiguration:Url");
 
         _httpClientFactory = httpClientFactory;
         _url = configuration.Value.Url;

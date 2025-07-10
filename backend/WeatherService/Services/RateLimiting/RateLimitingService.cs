@@ -6,8 +6,8 @@ namespace WeatherService.Services.RateLimiting;
 /// <inheritdoc />
 public class RateLimitingService : IRateLimitingService
 {
-    private const int DEFAULT_TIMEOUT_MINUTES = 60;
-    private const int DEFAULT_TIMEOUT_CAPACITY = 5;
+    private const int DefaultTimeoutMinutes = 60;
+    private const int DefaultTimeoutCapacity = 5;
 
     private readonly IDatabase _redisDb;
     private readonly TimeSpan _timeoutDuration;
@@ -16,8 +16,8 @@ public class RateLimitingService : IRateLimitingService
     public RateLimitingService(IOptions<RateLimitingConfiguration> rateLimitingConfiguration,
         IConnectionMultiplexer redis)
     {
-        var timeoutMinutes = rateLimitingConfiguration.Value.TimeoutMinutes ?? DEFAULT_TIMEOUT_MINUTES;
-        var retryLimit = rateLimitingConfiguration.Value.RetryLimit ?? DEFAULT_TIMEOUT_CAPACITY;
+        var timeoutMinutes = rateLimitingConfiguration.Value.TimeoutMinutes ?? DefaultTimeoutMinutes;
+        var retryLimit = rateLimitingConfiguration.Value.RetryLimit ?? DefaultTimeoutCapacity;
 
         _redisDb = redis.GetDatabase();
         _timeoutDuration = TimeSpan.FromMinutes(timeoutMinutes);
@@ -27,7 +27,7 @@ public class RateLimitingService : IRateLimitingService
     /// <inheritdoc />
     public async Task CheckRateLimitingAsync(string userKey)
     {
-        // Prefix the user key, to avoid key collisions
+        // Prefix with U (for user) to prevent key collisions
         var prefixedUserKey = $"U:{userKey}";
 
         // Ensure the default timeout is set for this user.

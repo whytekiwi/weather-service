@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using WeatherService.Services.ApiKeyValidation;
 using WeatherService.Services.OpenWeatherMap;
 using WeatherService.Services.RateLimiting;
+using WeatherService.Services.WeatherCachingService;
 
 namespace WeatherService;
 
@@ -18,7 +19,8 @@ public class FetchWeather(
     ILogger<FetchWeather> logger,
     IWeatherApiService weatherApiService,
     IRateLimitingService rateLimitingService,
-    ApiKeyValidationService apiKeyValidationService)
+    IApiKeyValidationService apiKeyValidationService,
+    IWeatherCachingService weatherCachingService)
 {
     /// <summary>
     /// Fetch weather function
@@ -32,12 +34,10 @@ public class FetchWeather(
         string userKey;
         try
         {
-            // Validate the API key from headers or query parameters
             userKey = apiKeyValidationService.ValidateApiKey(req);
         }
         catch (ApiKeyValidationException)
         {
-            // If the API key is invalid, return a 401 Unauthorized response
             return new UnauthorizedResult();
         }
 
@@ -51,20 +51,29 @@ public class FetchWeather(
             return new StatusCodeResult(StatusCodes.Status429TooManyRequests);
         }
 
-        string? country = req.Query["country"].FirstOrDefault();
+        var country = req.Query["country"].FirstOrDefault();
         if (string.IsNullOrWhiteSpace(country))
         {
             return new BadRequestObjectResult("Please enter country query parameter");
         }
 
-        string? city = req.Query["city"].FirstOrDefault();
+        var city = req.Query["city"].FirstOrDefault();
         if (string.IsNullOrWhiteSpace(city))
         {
             return new BadRequestObjectResult("Please enter city query parameter");
         }
 
-
-        // TODO: check redis
+        try
+        {
+            var weather = await weatherCachingService.CheckCacheAsync(city, country);
+            if (weather != null)
+                return new OkObjectResult(weather);
+        }
+        catch (JsonException ex)
+        {
+            // We should log the error, and fetch from the API again
+            logger.LogError(ex, ex.Message);
+        }
 
         try
         {
@@ -75,7 +84,7 @@ public class FetchWeather(
                 return new NoContentResult();
             }
 
-            // TODO: store result in redis
+            await weatherCachingService.AddToCacheAsync(city, country, result);
 
             // While the requirements were to simply return "description", I use a structured object for extensibility
             return new OkObjectResult(result);
@@ -88,7 +97,10 @@ public class FetchWeather(
         {
             // Ensure we have valid logs
             logger.LogError(ex, ex.Message);
-            return new BadRequestObjectResult($"Error fetching weather for {city}, {country}");
+            return new ObjectResult($"Error fetching weather for {city}, {country}")
+            {
+                StatusCode = StatusCodes.Status500InternalServerError
+            };
         }
     }
 }
