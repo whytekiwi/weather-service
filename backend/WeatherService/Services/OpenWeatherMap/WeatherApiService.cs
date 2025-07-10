@@ -25,7 +25,8 @@ public class WeatherApiService : IWeatherApiService
     }
 
     /// <inheritdoc />
-    public async Task<WeatherApiResult?> GetWeather(string city, string country)
+    public async Task<WeatherApiResult?> GetWeatherAsync(string city, string country,
+        CancellationToken cancellationToken = default)
     {
         var client = _httpClientFactory.CreateClient();
 
@@ -38,13 +39,13 @@ public class WeatherApiService : IWeatherApiService
         builder.Query = query.ToString();
         var url = builder.ToString();
 
-        var response = await client.GetAsync(url);
+        var response = await client.GetAsync(url, cancellationToken);
         response.EnsureSuccessStatusCode();
 
         // Requirements are to simply return the "description".
         // For memory efficiency, you could use a stream reader to only fetch the required string
         // I opted to parse the full document, allowing for the feature set of this API to be extended in a much simpler way
-        var result = await response.Content.ReadFromJsonAsync<ApiResult>();
+        var result = await response.Content.ReadFromJsonAsync<ApiResult>(cancellationToken);
 
         return result?.MapToApiResult();
     }

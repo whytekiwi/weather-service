@@ -48,7 +48,7 @@ namespace WeatherService.Tests
             var service = CreateService(response);
 
             // Act
-            var result = await service.GetWeather("Melbourne", "AU");
+            var result = await service.GetWeatherAsync("Melbourne", "AU");
 
             // Assert
             Assert.NotNull(result);
@@ -66,7 +66,7 @@ namespace WeatherService.Tests
             var service = CreateService(response);
 
             // Act
-            var result = await service.GetWeather("Melbourne", "AU");
+            var result = await service.GetWeatherAsync("Melbourne", "AU");
 
             // Assert
             Assert.Null(result);
@@ -80,7 +80,7 @@ namespace WeatherService.Tests
             var service = CreateService(response);
 
             // Act & Assert
-            await Assert.ThrowsAsync<HttpRequestException>(() => service.GetWeather("Melbourne", "AU"));
+            await Assert.ThrowsAsync<HttpRequestException>(() => service.GetWeatherAsync("Melbourne", "AU"));
         }
     }
 }
