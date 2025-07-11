@@ -64,8 +64,8 @@ This is best achieved with a `local.settings.json` file stored in the [Weather S
     "RedisCache": "localhost",
     "OpenWeatherMapConfiguration:Url": "https://api.openweathermap.org/data/2.5/weather",
     "OpenWeatherMapConfiguration:ApiKey": "",
-    "RateLimitingConfiguration:TimeoutMinutes": "5",
-    "RateLimitingConfiguration:RetryLimit": "10"
+    "RateLimitingConfiguration:TimeoutMinutes": "60",
+    "RateLimitingConfiguration:RetryLimit": "5"
   }
 }
 ```
