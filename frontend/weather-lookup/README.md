@@ -4,7 +4,7 @@ This is a simple web app built using React + Vite + Typescript.
 
 It allows the user to complete a web form, to look up the current weather for a `city` and `country`.
 
-It uses a custom built backend, found in this repo in the [backend directory](../../backend/README.md).
+It uses a custom-built backend, found in this repo in the [backend directory](../../backend/README.md).
 
 ## Getting Started
 
@@ -12,6 +12,13 @@ It uses a custom built backend, found in this repo in the [backend directory](..
 
 ```sh
 npm install
+```
+
+### Environment Variables
+Create a `.env` file in the root of the project and add the following environment variables:
+
+```env
+VITE_WEATHER_API_URL=http://localhost:7259/api/weather
 ```
 
 ### Run the development server

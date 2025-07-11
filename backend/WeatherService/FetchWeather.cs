@@ -27,7 +27,7 @@ public class FetchWeather(
     /// </summary>
     /// <param name="req">The incoming HTTP request</param>
     /// <returns></returns>
-    [Function("FetchWeather")]
+    [Function("Weather")]
     public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)
     {
         // A consideration for an orchestrator pattern could be made here, but we don't want to over-engineer

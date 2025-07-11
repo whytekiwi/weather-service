@@ -16,7 +16,7 @@ Alternatives exist, include docs generated at runtime, which does come with perf
 
 When running, this service will open 1 HTTP endpoint ready to be consumed (using tools like CURL, Postman, etc).
 
-- http://localhost:7071/api/FetchWeather: Query the current weather in a `city` and `country`.
+- http://localhost:7071/api/Weather: Query the current weather in a `city` and `country`.
 
 This request expects 2 query parameters:
 - `city`: The name of the city to query the weather for
