@@ -1,4 +1,4 @@
-import {TextField, Button, Box, FormHelperText, Alert} from '@mui/material';
+import {TextField, Button, Box, Alert, Stack} from '@mui/material';
 import {useEffect, useState, useTransition} from "react";
 import type {Weather} from "../../services/weatherModel.ts";
 import {FetchWeather} from "../../services/weatherService.ts";
@@ -50,29 +50,34 @@ const WeatherForm = () => {
             component="form"
             onSubmit={submitFormAction}
         >
-            <TextField
-                label="City"
-                name="city"
-                onChange={(e) => setCity(e.target.value)}
-                required
-                disabled={isPending}
-            />
-            <TextField
-                label="Country"
-                name="country"
-                onChange={(e) => setCountry(e.target.value)}
-                required
-                disabled={isPending}
-            />
-            <Button type="submit" disabled={isPending}>Submit</Button>
-            {error && (
-                <FormHelperText error>{error}</FormHelperText>
-            )}
-            {weatherData && (
-                <Alert severity="success" sx={{mt: 2}}>
-                    Weather for {weatherData.city}, {weatherData.country}: {weatherData.description}
-                </Alert>
-            )}
+            <Stack spacing={2}>
+
+                <TextField
+                    label="City"
+                    name="city"
+                    onChange={(e) => setCity(e.target.value)}
+                    required
+                    disabled={isPending}
+                />
+                <TextField
+                    label="Country"
+                    name="country"
+                    onChange={(e) => setCountry(e.target.value)}
+                    required
+                    disabled={isPending}
+                />
+                <Box display="flex" justifyContent="center">
+                    <Button type="submit" disabled={isPending}>Submit</Button>
+                </Box>
+                {error && (
+                    <Alert severity="error">{error}</Alert>
+                )}
+                {weatherData && (
+                    <Alert severity="success" sx={{mt: 2}}>
+                        Weather for {weatherData.city}, {weatherData.country}: {weatherData.description}
+                    </Alert>
+                )}
+            </Stack>
         </Box>
     )
 };
