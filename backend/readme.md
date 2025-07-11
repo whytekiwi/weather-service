@@ -8,11 +8,9 @@ It forwards the request on to the OpenWeatherApi service, and if successful retu
 
 ## API usage
 
-```
-NOTE: I'd usually do this with swagger, generated at build time using CI pipelines and hosted alongside the endpoints. That felt a little outside the scope of this project.
-
-Alternatives exist, include docs generated at runtime, which does come with performance impacts, but less development overhead.
-```
+> **NOTE:** I'd usually do this with swagger, generated at build time using CI pipelines and hosted alongside the > endpoints. That felt a little outside the scope of this project.
+> 
+> Alternatives exist, include docs generated at runtime, which does come with performance impacts, but less development overhead.
 
 When running, this service will open 1 HTTP endpoint ready to be consumed (using tools like CURL, Postman, etc).
 
