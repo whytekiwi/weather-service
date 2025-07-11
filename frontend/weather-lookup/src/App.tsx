@@ -1,19 +1,26 @@
-import { useState } from 'react'
-import './App.css'
+import UserSelector from "./components/userSelector/UserSelector.tsx";
+import {UserProvider, useUser} from "./context/UserContext.tsx";
+import {Card} from "@mui/material";
 
+function AppContent() {
+    const {selectedUser} = useUser();
+
+    return (
+        <Card>
+            <h1>Hello world</h1>
+            <UserSelector/>
+            {selectedUser && <div>Selected user Id = {selectedUser?.id}</div>}
+        </Card>
+    )
+}
+
+// Wrap the AppContent with UserProvider to provide user context
 function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <h1>Hello world</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-      </div>
-    </>
-  )
+    return (
+        <UserProvider>
+            <AppContent/>
+        </UserProvider>
+    )
 }
 
 export default App
